@@ -56,13 +56,29 @@ export function Calendar() {
         </div>
 
         {upcoming.length > 0 && (
-          <div className="mt-6 bg-sage/5 border border-sage/10 p-4 rounded-xl flex gap-3 items-start">
-            <AlertCircle className="text-sage shrink-0" size={18} />
-            <p className="text-xs text-muted leading-relaxed">
-              <strong>Action needed:</strong> {upcoming[0].daysToStart <= 0 
-                ? `${upcoming[0].name} is fast approaching. You should start production now!` 
-                : `Prepare for ${upcoming[0].name} in ${upcoming[0].daysToStart} days. We recommend ${upcoming[0].lead} weeks of lead time.`}
-            </p>
+          <div className="mt-6 bg-sage/5 border border-sage/10 p-4 rounded-xl flex flex-col gap-3">
+            <div className="flex items-start gap-3">
+                <AlertCircle className="text-sage shrink-0 mt-0.5" size={16} />
+                <p className="text-xs text-muted leading-relaxed">
+                <strong>Action needed:</strong> {upcoming[0].daysToStart <= 0 
+                    ? `For ${upcoming[0].name}, start production and listing now! Ensure your SEO tags are updated.` 
+                    : `Prepare materials for ${upcoming[0].name}. We recommend a ${upcoming[0].lead}-week lead time for production and marketing.`}
+                </p>
+            </div>
+            
+            <div className="border-t border-sage/10 pt-3 mt-1">
+                <h4 className="text-[10px] uppercase font-bold text-sage mb-2">✦ Best Platforms to Showcase</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="bg-white p-2.5 rounded border border-sage/10">
+                        <strong className="text-xs text-ink block mb-0.5">Instagram Reels & TikTok</strong>
+                        <p className="text-[10px] text-muted leading-tight">Post ASMR paper-cutting videos or satisfying assembly timelapses. Use trending audio.</p>
+                    </div>
+                    <div className="bg-white p-2.5 rounded border border-sage/10">
+                        <strong className="text-xs text-ink block mb-0.5">Pinterest </strong>
+                        <p className="text-[10px] text-muted leading-tight">Post high-quality vertical flat-lays 6 weeks before {upcoming[0].name}. Huge for DIY craft searches.</p>
+                    </div>
+                </div>
+            </div>
           </div>
         )}
       </div>

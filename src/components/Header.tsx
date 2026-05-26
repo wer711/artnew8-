@@ -1,18 +1,42 @@
 import React from "react";
-import { Heart, Sparkles, Coffee } from "lucide-react";
+import { Heart, Sparkles, Coffee, Facebook, Zap } from "lucide-react";
+import { useDailyLimit } from "../hooks/useDailyLimit";
 
 export function Header() {
+  const { usage, maxUsage, streak } = useDailyLimit();
+
   return (
-    <div className="bg-ink bg-opacity-95 text-center py-2 px-4 sticky top-0 z-50 backdrop-blur-md flex flex-wrap justify-center items-center gap-3">
-      <span className="text-blush/75 text-xs font-normal">
-        🌸 ArtNew8 — Free Paper Craft Tools
-      </span>
-      <a
-        href="#donation"
-        className="text-gold text-xs font-semibold no-underline border-b border-gold/40 hover:text-white transition-colors"
-      >
-        💛 Support this tool — Keep it free
-      </a>
+    <div className="bg-ink bg-opacity-95 text-center py-3 px-4 sticky top-0 z-40 backdrop-blur-md flex flex-wrap justify-between items-center gap-3">
+      <div className="flex items-center gap-3">
+        <span className="text-blush/90 text-sm font-semibold flex items-center gap-2">
+          🌸 ArtNew8 Tools
+        </span>
+        <a
+          href="https://www.facebook.com/share/g/1HLBeMbAVJ/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blush/70 hover:text-[#1877F2] transition-colors flex items-center gap-1 text-xs bg-white/5 py-1 px-2 rounded-full"
+          title="Join our Facebook Group"
+        >
+          <Facebook size={14} /> <span className="hidden sm:inline">Join Group</span>
+        </a>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3 text-xs">
+          {streak > 0 && <span className="text-gold flex items-center gap-1 font-medium"><Sparkles size={14}/> {streak} Day Streak</span>}
+          <div className="flex items-center gap-1 text-blush/70 bg-white/5 px-2 py-1 rounded-full">
+            <Zap size={14} className={usage >= maxUsage ? "text-rose" : "text-sage"} /> 
+            {maxUsage - usage} / {maxUsage} <span className="hidden sm:inline opacity-70">actions left</span>
+          </div>
+        </div>
+        <a
+          href="#donation"
+          className="text-ink bg-gold/90 hover:bg-gold px-4 py-1.5 rounded-full text-xs font-semibold no-underline transition-colors flex items-center gap-1"
+        >
+          💛 Support Project
+        </a>
+      </div>
     </div>
   );
 }
@@ -35,7 +59,7 @@ export function Notice() {
             I built this tool to help paper crafters save time, eliminate waste, and increase their profits. My dream is to dedicate myself to this project full-time and continuously release new, powerful features for the entire crafting community.
           </p>
           <p className="text-blush/90 text-sm md:text-base max-w-2xl mx-auto leading-relaxed pb-4">
-            Currently, these tools are 100% free and have zero ads. If you found them helpful, please consider making a donation. Your support directly funds server costs and allows me to keep building the ultimate toolkit for you!
+            Currently, these tools are 100% free and have zero ads, but Server costs add up quickly. If you found them helpful, please consider making a donation. Your support directly helps increase free daily limits and allows me to keep building the ultimate toolkit for you!
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

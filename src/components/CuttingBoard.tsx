@@ -1,7 +1,10 @@
 import React, { useRef, useState } from 'react';
-import { Scissors, Download, Image as ImageIcon } from 'lucide-react';
+import { Scissors, Download, Image as ImageIcon, Share2 } from 'lucide-react';
+import { useDailyLimit } from '../hooks/useDailyLimit';
+import { NextStep } from './NextStep';
 
 export function CuttingBoard() {
+  const { incrementUsage } = useDailyLimit();
   const [sheetW, setSheetW] = useState('12');
   const [sheetH, setSheetH] = useState('12');
   const [pieceW, setPieceW] = useState('3.5');
@@ -14,6 +17,8 @@ export function CuttingBoard() {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const calculate = () => {
+    if (!incrementUsage()) return; // Daily limit check
+
     const sw = parseFloat(sheetW);
     const sh = parseFloat(sheetH);
     const pw = parseFloat(pieceW);
@@ -170,6 +175,25 @@ export function CuttingBoard() {
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
   };
 
+  const shareLayout = async () => {
+    if (!stats) return;
+    const text = `✂️ I just calculated an optimized cutting layout using ArtNew8:\\n${stats.sheets} sheets needed with ${stats.eff}% paper efficiency!\\n\\nCalculate yours for free at ArtNew8! ✨`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'ArtNew8 Cutting Layout',
+          text: text,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log("Error sharing", err);
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert("Layout text copied to clipboard! Share it with your friends.");
+    }
+  };
+
   return (
     <section className="max-w-4xl mx-auto px-5 mb-16" id="cut-board">
       <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-sage/10">
@@ -226,7 +250,8 @@ export function CuttingBoard() {
             </div>
           
             <div className="bg-white p-6 rounded-2xl border border-sage/10 text-center flex flex-col items-center overflow-auto shadow-sm">
-              <div className="flex gap-3 mb-6 w-full justify-center">
+              <div className="flex flex-wrap gap-3 mb-6 w-full justify-center">
+                <button onClick={shareLayout} className="text-xs font-medium text-white bg-gradient-to-r from-sage to-[#5a8a52] px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-2"><Share2 size={14}/> Share Stats</button>
                 <button onClick={downloadSVG} className="text-xs font-medium text-sage bg-sage/10 border border-sage/20 px-4 py-2 rounded-lg hover:bg-sage hover:text-white transition-colors flex items-center gap-2"><Download size={14}/> Download SVG</button>
                 <button onClick={downloadPNG} className="text-xs font-medium text-sage bg-sage/10 border border-sage/20 px-4 py-2 rounded-lg hover:bg-sage hover:text-white transition-colors flex items-center gap-2"><ImageIcon size={14}/> Download PNG</button>
               </div>
@@ -271,6 +296,13 @@ export function CuttingBoard() {
                 ))}
               </svg>
             </div>
+            
+            <NextStep 
+              title="Avoid Pricing Mistakes"
+              description="Calculate exactly how much your materials, time, and selling fees will cost. Guarantee a profit on every sale!"
+              targetId="calculator"
+              icon="calculator"
+            />
           </div>
         )}
       </div>

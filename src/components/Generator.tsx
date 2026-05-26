@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Palette, Lock, LockOpen, Sparkles, TrendingUp, DollarSign } from 'lucide-react';
+import { Palette, Lock, LockOpen, Sparkles, TrendingUp, DollarSign, Share2 } from 'lucide-react';
 import { OCCASIONS, STYLES, getIdea } from '../data/db';
 import { PaletteIdea } from '../types';
+import { useDailyLimit } from '../hooks/useDailyLimit';
+import { NextStep } from './NextStep';
 
 export function Generator() {
+  const { incrementUsage } = useDailyLimit();
+  const [projectType, setProjectType] = useState('cards');
   const [occasion, setOccasion] = useState('');
   const [style, setStyle] = useState('classic');
   const [result, setResult] = useState<PaletteIdea | null>(null);
@@ -11,7 +15,9 @@ export function Generator() {
 
   const handleGenerate = () => {
     if (!occasion) return alert('Select an occasion first');
-    const idea = getIdea(occasion, style);
+    if (!incrementUsage()) return; // Daily limit check
+    
+    const idea = getIdea(occasion, style, projectType);
     
     // Process locked colors
     if (result) {
@@ -33,6 +39,25 @@ export function Generator() {
     setLocks(prev => ({ ...prev, [i]: !prev[i] }));
   };
 
+  const sharePalette = async () => {
+    if (!result) return;
+    const text = `🎨 I just generated a new color palette for my ${occasion} project using ArtNew8!\\nColors: ${result.colors.join(', ')}\\nIdea: ${result.idea}\\n\\nGenerate yours for free at ArtNew8! ✨`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'ArtNew8 Palette & Idea',
+          text: text,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log("Error sharing", err);
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert("Palette text copied to clipboard! Share it with your friends.");
+    }
+  };
+
   return (
     <section className="max-w-4xl mx-auto px-5 mb-16" id="tool">
       <div className="text-center mb-8">
@@ -49,10 +74,12 @@ export function Generator() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
             <label className="block text-xs font-medium text-muted mb-1 tracking-wide">Project Type</label>
-            <select className="w-full p-3 border border-rose/15 rounded-xl text-sm focus:border-rose outline-none bg-white">
-              <option value="card_making">Card Making</option>
-              <option value="paper_flowers">Paper Flowers</option>
+            <select value={projectType} onChange={e => setProjectType(e.target.value)} className="w-full p-3 border border-rose/15 rounded-xl text-sm focus:border-rose outline-none bg-white">
+              <option value="cards">Card Making</option>
+              <option value="flowers">Paper Flowers</option>
               <option value="origami">Origami</option>
+              <option value="scrapbook">Scrapbooking</option>
+              <option value="party">Party Decor</option>
             </select>
           </div>
           <div>
@@ -102,9 +129,14 @@ export function Generator() {
             <div className="bg-gradient-to-br from-sage/5 to-rose/5 rounded-2xl p-5 border border-sage/10 mb-5">
               <div className="flex justify-between items-center mb-4">
                 <h4 className="text-sm font-semibold text-deep flex items-center gap-1.5"><Palette size={14} /> Color Palette</h4>
-                <button onClick={handleGenerate} className="text-[10px] text-sage bg-white border border-sage/20 px-3 py-1.5 rounded-lg hover:bg-sage hover:text-white transition-colors">
-                  Regenerate Unlocked
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={sharePalette} className="text-[10px] text-white bg-gradient-to-r from-rose to-gold px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all flex items-center gap-1 font-medium">
+                    Share
+                  </button>
+                  <button onClick={handleGenerate} className="text-[10px] text-sage bg-white border border-sage/20 px-3 py-1.5 rounded-lg hover:bg-sage hover:text-white transition-colors">
+                    Regenerate Unlocked
+                  </button>
+                </div>
               </div>
               
               <div className="flex gap-3 justify-center flex-wrap">
@@ -134,22 +166,53 @@ export function Generator() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <div className="bg-gradient-to-br from-gold/5 to-rose/5 rounded-xl p-4 border border-gold/15">
-                <h4 className="flex items-center text-xs font-semibold text-gold mb-3 gap-1.5"><TrendingUp size={14} /> Intelligence</h4>
-                <div className="flex justify-between gap-2">
-                  <div className="flex-1 bg-white rounded-lg p-2 text-center text-sm font-semibold text-deep shadow-sm border border-gold/5">{result.price}</div>
-                  <div className="flex-1 bg-white rounded-lg p-2 text-center text-sm font-semibold text-deep shadow-sm border border-gold/5">{result.demand}</div>
-                  <div className="flex-1 bg-white rounded-lg p-2 text-center text-sm font-semibold text-deep shadow-sm border border-gold/5">{result.competition}</div>
+              <div className="bg-gradient-to-br from-gold/5 to-rose/5 rounded-xl p-4 border border-gold/15 flex flex-col h-full justify-between">
+                <div>
+                    <h4 className="flex items-center text-xs font-semibold text-gold mb-3 gap-1.5"><TrendingUp size={14} /> Intelligence</h4>
+                    <div className="flex justify-between gap-2 mb-3">
+                    <div className="flex-1 bg-white rounded-lg p-2 text-center shadow-sm border border-gold/5">
+                        <div className="text-[9px] text-muted uppercase tracking-wider mb-1">Target Price</div>
+                        <div className="text-xs font-semibold text-deep">{result.price}</div>
+                    </div>
+                    <div className="flex-1 bg-white rounded-lg p-2 text-center shadow-sm border border-gold/5">
+                        <div className="text-[9px] text-muted uppercase tracking-wider mb-1">Demand</div>
+                        <div className="text-xs font-semibold text-deep">{result.demand}</div>
+                    </div>
+                    <div className="flex-1 bg-white rounded-lg p-2 text-center shadow-sm border border-gold/5">
+                        <div className="text-[9px] text-muted uppercase tracking-wider mb-1">Competition</div>
+                        <div className="text-xs font-semibold text-deep">{result.competition}</div>
+                    </div>
+                    </div>
+                </div>
+                
+                <div className="bg-white rounded-lg p-3 border border-gold/10 shadow-sm mt-auto">
+                    <h5 className="text-[10px] uppercase font-semibold text-gold mb-1.5 flex items-center gap-1">Photography Tip</h5>
+                    <p className="text-xs text-ink/80 leading-relaxed italic">{result.photoTip}</p>
                 </div>
               </div>
-              <div className="bg-sage/5 rounded-xl p-4 border border-sage/10">
-                <h4 className="flex items-center text-xs font-semibold text-sage mb-2 gap-1.5">Materials</h4>
-                <ul className="text-xs text-ink/80 space-y-1">
-                  {result.materials.map((m, i) => <li key={i} className="border-b border-sage/10 pb-1 last:border-0">• {m}</li>)}
+              <div className="bg-sage/5 rounded-xl p-4 border border-sage/10 flex flex-col h-full">
+                <h4 className="flex items-center text-xs font-semibold text-sage mb-2 gap-1.5">Materials Needed</h4>
+                <ul className="text-xs text-ink/80 space-y-1.5 mb-4">
+                  {result.materials.map((m, i) => <li key={i} className="border-b border-sage/10 pb-1.5 last:border-0 flex items-start gap-1.5"><span className="text-sage mt-0.5">•</span> <span>{m}</span></li>)}
                 </ul>
+                
+                <div className="mt-auto">
+                    <h4 className="flex items-center text-[10px] uppercase font-semibold text-sage mb-1.5 gap-1">SEO Keywords (Etsy/Social)</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                        {result.keywords.map((kw, i) => (
+                            <span key={i} className="text-[9px] bg-white text-ink/70 px-2 py-1 rounded border border-sage/20 shadow-sm">{kw}</span>
+                        ))}
+                    </div>
+                </div>
               </div>
             </div>
-
+            
+            <NextStep 
+              title="Extract Colors from Inspiration"
+              description="Found a photo that perfectly matches this mood? Extract the exact hex codes from it to build your own palette."
+              targetId="image-extractor"
+              icon="palette"
+            />
           </div>
         )}
       </div>

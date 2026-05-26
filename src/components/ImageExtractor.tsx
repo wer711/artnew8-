@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Share2, Sparkles } from 'lucide-react';
+import { useDailyLimit } from '../hooks/useDailyLimit';
+import { NextStep } from './NextStep';
 
 function colorDistance(hex1: string, hex2: string) {
   const r1 = parseInt(hex1.substring(1, 3), 16);
@@ -12,6 +14,7 @@ function colorDistance(hex1: string, hex2: string) {
 }
 
 export function ImageExtractor() {
+  const { incrementUsage } = useDailyLimit();
   const [colors, setColors] = useState<string[]>([]);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null);
@@ -21,6 +24,8 @@ export function ImageExtractor() {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!incrementUsage()) return; // Daily limit check
 
     const url = URL.createObjectURL(file);
     setImgUrl(url);
@@ -43,6 +48,8 @@ export function ImageExtractor() {
 
   const extract = () => {
     if (!originalImage) return;
+
+    if (!incrementUsage()) return; // Daily limit check
 
     const extractCanvas = document.createElement('canvas');
     // Using a higher resolution limit to capture detailed colors
@@ -160,6 +167,25 @@ export function ImageExtractor() {
   };
 
 
+  const sharePalette = async () => {
+    if (colors.length === 0) return;
+    const text = `🎨 Check out this color palette I extracted using ArtNew8:\\n${colors.join(', ')}\\n\\nGenerate yours for free at ArtNew8! ✨`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'ArtNew8 Color Palette',
+          text: text,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log("Error sharing", err);
+      }
+    } else {
+      navigator.clipboard.writeText(text);
+      alert("Palette copied to clipboard! Share it with your friends.");
+    }
+  };
+
   return (
     <section className="max-w-4xl mx-auto px-5 mb-16" id="image-extractor">
       <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-sage/15">
@@ -209,6 +235,7 @@ export function ImageExtractor() {
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="text-xs font-semibold text-deep uppercase tracking-wider">Extracted Palette</h4>
                     <div className="flex gap-2">
+                      <button onClick={sharePalette} className="text-[10px] text-white bg-gradient-to-r from-rose to-gold px-2 py-1 rounded shadow-sm hover:shadow-md transition-all flex items-center gap-1 font-medium"><Share2 size={12}/> Share</button>
                       <button onClick={downloadPNG} className="text-[10px] text-rose bg-white border border-rose/20 px-2 py-1 rounded hover:bg-rose hover:text-white transition-colors">PNG</button>
                       <button onClick={downloadCSV} className="text-[10px] text-rose bg-white border border-rose/20 px-2 py-1 rounded hover:bg-rose hover:text-white transition-colors">CSV</button>
                       <button onClick={downloadJSON} className="text-[10px] text-rose bg-white border border-rose/20 px-2 py-1 rounded hover:bg-rose hover:text-white transition-colors">JSON</button>
@@ -224,6 +251,15 @@ export function ImageExtractor() {
                 </div>
               )}
             </div>
+            
+            {colors.length > 0 && (
+              <NextStep 
+                title="Calculate Paper Cutting Needs"
+                description="Now that you have your design and colors, find out how much paper you'll need with zero-waste efficiency."
+                targetId="cut-board"
+                icon="scissors"
+              />
+            )}
           </div>
         )}
       </div>
