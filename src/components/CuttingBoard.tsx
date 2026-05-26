@@ -195,13 +195,12 @@ export function CuttingBoard() {
   };
 
   return (
-    <section className="max-w-4xl mx-auto px-5 mb-16" id="cut-board">
-      <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-sage/10">
+    <div className="w-full">
+      <div className="bg-white sm:bg-warm sm:rounded-3xl sm:p-6 sm:border border-sage/10 -mx-4 sm:mx-0 px-4 sm:px-0">
         <div className="text-center mb-6">
           <div className="inline-flex justify-center items-center w-12 h-12 rounded-full bg-sage/10 text-sage mb-3">
             <Scissors size={24} />
           </div>
-          <h2 className="font-serif text-3xl font-light mb-2">Zero Waste Cutting Layout</h2>
           <p className="text-sm text-muted">A professional guillotine-optimized layout algorithm reflecting real-world paper crafting (with blades/kerf gaps).</p>
         </div>
 
@@ -296,16 +295,9 @@ export function CuttingBoard() {
                 ))}
               </svg>
             </div>
-            
-            <NextStep 
-              title="Avoid Pricing Mistakes"
-              description="Calculate exactly how much your materials, time, and selling fees will cost. Guarantee a profit on every sale!"
-              targetId="calculator"
-              icon="calculator"
-            />
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }

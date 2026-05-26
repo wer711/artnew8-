@@ -26,8 +26,8 @@ export function Calendar() {
   }).sort((a,b) => a.daysUntil - b.daysUntil).slice(0, 4);
 
   return (
-    <section className="max-w-4xl mx-auto px-5 mb-16" id="calendar">
-      <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-gold/15">
+    <div className="w-full">
+      <div className="bg-white sm:bg-warm sm:rounded-3xl sm:p-6 sm:border border-gold/15 -mx-4 sm:mx-0 px-4 sm:px-0">
         <div className="text-center mb-8">
           <p className="text-[10px] tracking-[3px] uppercase text-gold font-medium mb-3">
             ✦ Smart Occasion Calendar
@@ -82,6 +82,6 @@ export function Calendar() {
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }

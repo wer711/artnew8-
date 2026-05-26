@@ -79,13 +79,12 @@ export function Calculator() {
   };
 
   return (
-    <section className="max-w-4xl mx-auto px-5 mb-16" id="calculator">
-      <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-rose/10">
+    <div className="w-full">
+      <div className="bg-white sm:bg-warm sm:rounded-3xl sm:p-6 sm:border sm:border-rose/10 -mx-4 sm:mx-0 px-4 sm:px-0">
         <div className="text-center mb-6">
           <div className="inline-flex justify-center items-center w-12 h-12 rounded-full bg-sage/10 text-sage mb-3">
             <CalcIcon size={24} />
           </div>
-          <h2 className="font-serif text-2xl font-semibold">Production Cost & Profit Calculator</h2>
           <p className="text-xs text-muted mt-2">Automatically calculates marketplace selling fees to guarantee your profit.</p>
         </div>
 
@@ -148,16 +147,9 @@ export function Calculator() {
                 <div className="text-[10px] text-muted">Monthly Proj. (10 sales/mo)</div>
               </div>
             </div>
-            
-            <NextStep 
-              title="Plan Your Sales & Posts"
-              description="Now that you have your pricing sorted, schedule when to make and post your products on social media using the Content Calendar."
-              targetId="calendar"
-              icon="calendar"
-            />
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }

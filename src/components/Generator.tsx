@@ -3,7 +3,6 @@ import { Palette, Lock, LockOpen, Sparkles, TrendingUp, DollarSign, Share2 } fro
 import { OCCASIONS, STYLES, getIdea } from '../data/db';
 import { PaletteIdea } from '../types';
 import { useDailyLimit } from '../hooks/useDailyLimit';
-import { NextStep } from './NextStep';
 
 export function Generator() {
   const { incrementUsage } = useDailyLimit();
@@ -71,7 +70,7 @@ export function Generator() {
 
       <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-rose/10">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-6">
           <div>
             <label className="block text-xs font-medium text-muted mb-1 tracking-wide">Project Type</label>
             <select value={projectType} onChange={e => setProjectType(e.target.value)} className="w-full p-3 border border-rose/15 rounded-xl text-sm focus:border-rose outline-none bg-white">
@@ -206,13 +205,6 @@ export function Generator() {
                 </div>
               </div>
             </div>
-            
-            <NextStep 
-              title="Extract Colors from Inspiration"
-              description="Found a photo that perfectly matches this mood? Extract the exact hex codes from it to build your own palette."
-              targetId="image-extractor"
-              icon="palette"
-            />
           </div>
         )}
       </div>

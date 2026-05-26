@@ -187,14 +187,14 @@ export function ImageExtractor() {
   };
 
   return (
-    <section className="max-w-4xl mx-auto px-5 mb-16" id="image-extractor">
-      <div className="bg-warm rounded-3xl p-6 md:p-10 shadow-2xl shadow-ink/5 border border-sage/15">
+    <div className="max-w-4xl mx-auto px-5 mb-16" id="image-extractor">
+      <div className="bg-white rounded-3xl p-6 md:p-10 shadow-lg border border-sage/10 relative overflow-hidden">
         <div className="text-center mb-8">
           <p className="text-[10px] tracking-[3px] uppercase text-sage font-medium mb-3">
-            ✦ Extract Colors from Any Photo
+            ✦ Found a Photo You Love?
           </p>
           <h2 className="font-serif text-3xl md:text-4xl text-ink font-light mb-4">
-            Upload a Photo → Get <em className="italic text-rose">Paper Colors</em>
+            Upload & Extract <em className="italic text-rose">Palette</em>
           </h2>
         </div>
 
@@ -208,8 +208,8 @@ export function ImageExtractor() {
         ) : (
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-shrink-0 relative">
-              <canvas ref={canvasRef} className="rounded-xl shadow-lg max-w-full max-h-[300px]" />
-              <button onClick={() => { setImgUrl(null); setColors([]); }} className="absolute -top-3 -right-3 bg-rose text-white rounded-full p-1.5 shadow-md">
+              <canvas ref={canvasRef} className="rounded-xl shadow-md max-w-full w-auto object-contain max-h-[300px] md:max-h-[400px]" />
+              <button onClick={() => { setImgUrl(null); setColors([]); }} className="absolute -top-3 -right-3 bg-rose text-white rounded-full p-1.5 shadow-md hover:scale-110 transition-transform">
                 <X size={16} />
               </button>
             </div>
@@ -237,32 +237,21 @@ export function ImageExtractor() {
                     <div className="flex gap-2">
                       <button onClick={sharePalette} className="text-[10px] text-white bg-gradient-to-r from-rose to-gold px-2 py-1 rounded shadow-sm hover:shadow-md transition-all flex items-center gap-1 font-medium"><Share2 size={12}/> Share</button>
                       <button onClick={downloadPNG} className="text-[10px] text-rose bg-white border border-rose/20 px-2 py-1 rounded hover:bg-rose hover:text-white transition-colors">PNG</button>
-                      <button onClick={downloadCSV} className="text-[10px] text-rose bg-white border border-rose/20 px-2 py-1 rounded hover:bg-rose hover:text-white transition-colors">CSV</button>
-                      <button onClick={downloadJSON} className="text-[10px] text-rose bg-white border border-rose/20 px-2 py-1 rounded hover:bg-rose hover:text-white transition-colors">JSON</button>
                     </div>
                   </div>
-                  <div className="flex gap-2 flex-wrap max-h-48 overflow-y-auto pr-1 custom-scrollbar pb-2">
+                  <div className="flex gap-2 flex-wrap max-h-48 overflow-y-auto pr-1 pb-2">
                     {colors.map((c, i) => (
-                      <div key={i} className="flex-1 min-w-[50px] max-w-[80px] h-16 rounded-lg shadow-sm flex items-end justify-center pb-2 cursor-pointer hover:-translate-y-1 transition-transform" style={{backgroundColor: c}}>
-                        <span className="text-[9px] text-white bg-black/30 px-1 rounded backdrop-blur-sm">{c}</span>
+                      <div key={i} className="flex-1 min-w-[45px] max-w-[70px] h-14 rounded-lg shadow-sm flex items-end justify-center pb-1.5 cursor-pointer hover:-translate-y-1 transition-transform" style={{backgroundColor: c}}>
+                        <span className="text-[8px] text-white bg-black/40 px-1 rounded backdrop-blur-sm tracking-wider">{c}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
             </div>
-            
-            {colors.length > 0 && (
-              <NextStep 
-                title="Calculate Paper Cutting Needs"
-                description="Now that you have your design and colors, find out how much paper you'll need with zero-waste efficiency."
-                targetId="cut-board"
-                icon="scissors"
-              />
-            )}
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }
