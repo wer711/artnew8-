@@ -18,11 +18,11 @@ export default function App() {
     <div className="min-h-screen pb-20 font-sans">
       <Header />
       <Hero />
-      <Notice />
-      <div className="my-16" />
+      <div className="my-8" />
       <Generator />
       <ImageExtractor />
       <Library />
+      <Notice />
       <Calculator />
       <CuttingBoard />
       <Calendar />
